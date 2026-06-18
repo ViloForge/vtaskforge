@@ -1,4 +1,28 @@
-# AGENTS.md
+# AGENTS.md — vtaskforge
+
+> **vtaskforge** is the orchestration component of the **viloforge-asdlc** program — a
+> **fork of [Paperclip](https://github.com/paperclipai/paperclip)** (rebranded), with
+> **Hermes agents** as the workers, running an Agentic SDLC (charter → recursive `REFINE` →
+> build, at autonomy **L3**).
+>
+> **📍 Program context, vision, process, and program-level ADRs live in the umbrella:**
+> **`ViloForge/viloforge-asdlc`** — read its `AGENTS.md` first. This repo is one component.
+>
+> - **Origin:** `ViloForge/vtaskforge` (public **native fork** of `paperclipai/paperclip`).
+>   **Upstream sync:** `upstream = paperclipai/paperclip`; pull deliberately ("Sync fork" /
+>   `git fetch upstream && git merge upstream/master`). Keep the Paperclip `LICENSE` (MIT).
+> - **Product ADRs** go in `docs/adr/` (vtaskforge's internal code design — the first-class
+>   ADR entity, the deterministic conductor, etc.). *None yet — added as we build.*
+> - **Replaces** the old Django/DRF vtaskforge (now `ViloForge/vtaskforge-legacy`, archived).
+> - **Principles (non-negotiable):** charter-before-build · gate-on-evidence-not-self-report ·
+>   structural-rules-need-a-Brake.
+>
+> *Everything below is the inherited Paperclip contributor guide — still accurate for the
+> codebase we forked.*
+
+---
+
+# AGENTS.md (Paperclip — inherited)
 
 Guidance for human and AI contributors working in this repository.
 

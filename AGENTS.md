@@ -11,14 +11,75 @@
 > - **Origin:** `ViloForge/vtaskforge` (public **native fork** of `paperclipai/paperclip`).
 >   **Upstream sync:** `upstream = paperclipai/paperclip`; pull deliberately ("Sync fork" /
 >   `git fetch upstream && git merge upstream/master`). Keep the Paperclip `LICENSE` (MIT).
-> - **Product ADRs** go in `docs/adr/` (vtaskforge's internal code design — the first-class
->   ADR entity, the deterministic conductor, etc.). *None yet — added as we build.*
+> - **Product ADRs** in `docs/adr/`: ADR-0001 (adopt the ASDLC), ADR-0002 (first build target
+>   = the reliability spine). More added just-in-time as we build.
 > - **Replaces** the old Django/DRF vtaskforge (now `ViloForge/vtaskforge-legacy`, archived).
 > - **Principles (non-negotiable):** charter-before-build · gate-on-evidence-not-self-report ·
 >   structural-rules-need-a-Brake.
 >
-> *Everything below is the inherited Paperclip contributor guide — still accurate for the
-> codebase we forked.*
+> *The **Constitution** (below) is the behavioral law for this repo. Under it is the inherited
+> Paperclip contributor guide — still accurate for the codebase we forked.*
+
+---
+
+# Constitution (vtaskforge)
+
+The behavioral law for **every agent and human** doing work in vtaskforge. The **Conductor**
+and **Critic** cite these articles; violating one **blocks the transition to `done`**.
+Grounded in the program's `ASDLC-ON-PAPERCLIP.md` + the spike findings (`docs/RESULTS.md` in
+the umbrella) + the `vfwms-forge` prior art.
+
+### Article 1 — The three non-negotiables
+1. **Charter before build.** Decide the *how* (stack, architecture, interfaces) **before**
+   building, recursively and just-in-time, riskiest-unknown first. An agent never picks the
+   stack per-slice; it builds against an Accepted charter decision (ADR).
+2. **Gate on evidence, never self-report.** "Done" is a claim until evidence proves it.
+3. **Structural rules need a deterministic Brake.** A behavioral judge (Critic) cannot see a
+   structural violation (a dropped dependency, dedup, SOLID); enforce those with a
+   whole-codebase Brake (lint/build/test), not prose.
+
+### Article 2 — Definition of Done (evidence-gated)
+A slice is `done` **only** when: (a) its acceptance criteria are met; (b) **evidence is
+attached** (passing tests / audit output / the artifact itself); and (c) the relevant
+**Brakes are green** (build, types, lint, tests). A "done" with no attached evidence does
+**not** satisfy DoD — the Conductor rejects it. *(Spike lesson: agents claim done
+prematurely; the hardened prompt-template that PATCHes then GET-verifies status is mandatory
+for worker agents.)*
+
+### Article 3 — Definition of Ready
+Do **not** start a slice until: scope is bounded, acceptance criteria **and the one
+disconfirming test** are written, and every charter decision it depends on is **Accepted**.
+Unready → push back; never guess the missing piece.
+
+### Article 4 — Autonomy ceiling = L3
+Agents act autonomously **within a slice** up to **L3** (conditional autonomy). Humans hold
+the **gates**: charter ratification, high-risk/irreversible actions, merges to protected
+branches, anything touching prod. **Never L4** (no silent autonomous shipping). When blocked
+or uncertain, **stop and surface** — do not fabricate a result.
+
+### Article 5 — Verify, don't trust
+Never relay a tool's or agent's "passed/verified/done" as fact. **A result not in observed
+output does not exist.** Before any load-bearing claim, run its **disconfirming test** and
+read the ground truth.
+
+### Article 6 — Roles
+- **Generator** — the worker agent (e.g. Hermes/DeepSeek) that produces the slice.
+- **Critic** — an *independent* judge (different model family) that scores the slice against
+  this Constitution + the charter. It is a *behavioral* layer, so it pairs with Brakes.
+- **Conductor** — *deterministic*: gates every transition on evidence + green Brakes, and
+  **routes rejects with a reason**.
+
+### Article 7 — Reject carries a reason
+Every rejection states **what failed** and **what evidence would satisfy it**. No silent rejects.
+
+### Article 8 — Secrets & blast radius
+Secrets are **never** baked into images or commits (runtime injection only) and are masked in
+logs. Destructive/outward ops are **gated**. Isolate an agent (sandbox) when its blast radius
+warrants it.
+
+### Amendment
+This Constitution is itself charter. Amend an article only via a **product ADR** that
+supersedes it, then **re-gate** the slices that cite it (`ASDLC-ON-PAPERCLIP.md` §2.3).
 
 ---
 

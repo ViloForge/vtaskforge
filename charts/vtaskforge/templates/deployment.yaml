@@ -86,11 +86,21 @@ spec:
             - name: paperclip
               mountPath: /paperclip
           startupProbe:
-            httpGet: { path: /, port: {{ .Values.server.port }} }
+            httpGet:
+              path: /
+              port: {{ .Values.server.port }}
+              httpHeaders:            # authenticated/private mode 403s a non-allowed Host (pod IP); send the public host
+                - name: Host
+                  value: {{ .Values.ingress.host }}
             periodSeconds: 5
             failureThreshold: 60        # up to ~5min for first-boot migrations
           readinessProbe:
-            httpGet: { path: /, port: {{ .Values.server.port }} }
+            httpGet:
+              path: /
+              port: {{ .Values.server.port }}
+              httpHeaders:
+                - name: Host
+                  value: {{ .Values.ingress.host }}
             periodSeconds: 10
           livenessProbe:
             tcpSocket: { port: {{ .Values.server.port }} }

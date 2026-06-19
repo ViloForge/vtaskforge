@@ -35,7 +35,13 @@ COPY packages/adapters/openclaw-gateway/package.json packages/adapters/openclaw-
 COPY packages/adapters/opencode-local/package.json packages/adapters/opencode-local/
 COPY packages/adapters/pi-local/package.json packages/adapters/pi-local/
 COPY packages/plugins/sdk/package.json packages/plugins/sdk/
-COPY --parents packages/plugins/sandbox-providers/./*/package.json packages/plugins/sandbox-providers/
+COPY packages/plugins/sandbox-providers/cloudflare/package.json packages/plugins/sandbox-providers/cloudflare/
+COPY packages/plugins/sandbox-providers/daytona/package.json packages/plugins/sandbox-providers/daytona/
+COPY packages/plugins/sandbox-providers/e2b/package.json packages/plugins/sandbox-providers/e2b/
+COPY packages/plugins/sandbox-providers/exe-dev/package.json packages/plugins/sandbox-providers/exe-dev/
+COPY packages/plugins/sandbox-providers/kubernetes/package.json packages/plugins/sandbox-providers/kubernetes/
+COPY packages/plugins/sandbox-providers/modal/package.json packages/plugins/sandbox-providers/modal/
+COPY packages/plugins/sandbox-providers/novita/package.json packages/plugins/sandbox-providers/novita/
 COPY packages/plugins/paperclip-plugin-fake-sandbox/package.json packages/plugins/paperclip-plugin-fake-sandbox/
 COPY packages/plugins/plugin-llm-wiki/package.json packages/plugins/plugin-llm-wiki/
 COPY packages/plugins/plugin-workspace-diff/package.json packages/plugins/plugin-workspace-diff/
@@ -83,7 +89,22 @@ ENV NODE_ENV=production \
   OPENCODE_ALLOW_ALL_MODELS=true \
   GEMINI_SANDBOX=false
 
+# --- hermes overlay: the `hermes` CLI (the hermes_local adapter spawns it) + DeepSeek seed ---
+USER root
+RUN apt-get update \
+  && apt-get install -y --no-install-recommends python3-venv ffmpeg \
+  && rm -rf /var/lib/apt/lists/* \
+  && python3 -m venv /opt/hermes-venv \
+  && /opt/hermes-venv/bin/pip install --no-cache-dir --upgrade pip \
+  && /opt/hermes-venv/bin/pip install --no-cache-dir "hermes-agent==0.16.0" \
+  && ln -sf /opt/hermes-venv/bin/hermes /usr/local/bin/hermes \
+  && /usr/local/bin/hermes --version
+COPY hermes/config.yaml /opt/hermes-seed/config.yaml
+COPY hermes/seed-entrypoint.sh /usr/local/bin/hermes-seed-entrypoint.sh
+RUN chmod +x /usr/local/bin/hermes-seed-entrypoint.sh
+
 EXPOSE 3100
 
-ENTRYPOINT ["docker-entrypoint.sh"]
+# hermes-seed seeds the DeepSeek config into /paperclip/.hermes, then chains to docker-entrypoint.sh
+ENTRYPOINT ["hermes-seed-entrypoint.sh"]
 CMD ["node", "--import", "./server/node_modules/tsx/dist/loader.mjs", "server/dist/index.js"]

@@ -1,0 +1,8 @@
+# Hermes config baked into the image for the hermes_local child process.
+# Structured dict form (provider + bare default) is required — a bare
+# `model: deepseek-chat` string fails Hermes's config validation.
+# The DeepSeek API key is NOT here; it is read from DEEPSEEK_API_KEY in the
+# environment (injected at runtime via docker compose), which Hermes also honors.
+model:
+  provider: deepseek
+  default: deepseek-chat

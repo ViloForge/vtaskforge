@@ -551,6 +551,12 @@ const INVALID_AGENT_IN_REVIEW_DISPOSITION_MESSAGE =
   "link or request a pending approval, assign a human reviewer with assigneeUserId, set a typed executionState.currentParticipant through an execution policy, " +
   "or schedule an issue monitor for an external review/check. After creating one of those review paths, retry the status update.";
 
+const LOW_TRUST_AGENT_CANNOT_CLOSE_MESSAGE =
+  "invalid_issue_disposition: A low-trust agent cannot close an issue (done/cancelled). " +
+  "Under the low_trust_review preset this agent's work product is quarantined pending human promotion, " +
+  "so self-closing would mark the issue complete while its evidence is un-reviewed and un-promoted. " +
+  "Move the issue to in_review with a real review path so a board reviewer can promote the quarantined output and close it.";
+
 function executionPrincipalsEqual(
   left: ParsedExecutionState["currentParticipant"] | null,
   right: ParsedExecutionState["currentParticipant"] | null,
@@ -1643,6 +1649,34 @@ export function issueRoutes(
         "typed_execution_state_current_participant",
         "scheduled_issue_monitor",
       ],
+    });
+  }
+
+  // Reliability spine: a low-trust agent cannot self-close an issue. Its output is
+  // quarantined pending human promotion (and it cannot self-promote), so closing would
+  // mark work "done" while the evidence is un-reviewed. It must hand off via in_review.
+  async function assertLowTrustAgentCannotClose(input: {
+    existing: { id: string; companyId: string; status: string; projectId?: string | null; executionPolicy?: unknown };
+    updateFields: Record<string, unknown>;
+    req: Request;
+  }) {
+    if (input.req.actor.type !== "agent") return;
+    const nextStatus = typeof input.updateFields.status === "string"
+      ? input.updateFields.status
+      : input.existing.status;
+    // Only gate a transition INTO a closed status (ignore already-closed no-ops).
+    if (!isClosedIssueStatus(nextStatus) || isClosedIssueStatus(input.existing.status)) return;
+    const isLowTrust = await actorIsLowTrustReview(input.req, input.existing.companyId, {
+      companyId: input.existing.companyId,
+      projectId: input.existing.projectId,
+      executionPolicy: input.existing.executionPolicy,
+    });
+    if (!isLowTrust) return;
+    throw unprocessable(LOW_TRUST_AGENT_CANNOT_CLOSE_MESSAGE, {
+      code: "invalid_issue_disposition",
+      missing: "promoted_evidence",
+      attemptedStatus: nextStatus,
+      requiredDisposition: "in_review",
     });
   }
 
@@ -5063,6 +5097,8 @@ export function issueRoutes(
       updateFields,
       actorType: req.actor.type,
     });
+
+    await assertLowTrustAgentCannotClose({ existing, updateFields, req });
 
     const nextAssigneeAgentId =
       updateFields.assigneeAgentId === undefined ? existing.assigneeAgentId : (updateFields.assigneeAgentId as string | null);

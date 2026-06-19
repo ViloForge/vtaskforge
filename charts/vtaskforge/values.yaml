@@ -1,0 +1,42 @@
+# vtaskforge chart defaults. Per-env overrides live in
+# viloforge-platform/argo/products/vtaskforge/<env>/values.yaml
+image:
+  repository: harbor.viloforge.com/vtaskforge/vtaskforge
+  tag: ""            # set per-env (the pushed Harbor tag)
+  pullPolicy: IfNotPresent
+imagePullSecrets:
+  - name: harbor-pull-secret
+
+# Public URL + ingress host — set per env (asdlc.viloforge.com / asdlc.test.viloforge.com)
+publicUrl: ""
+ingress:
+  host: ""
+  entryPoint: websecure
+  certResolverViaCertManager: true   # cert-manager Certificate -> secret -> IngressRoute tls.secretName
+
+# The k8s Secret materialized by the ExternalSecret (in viloforge-platform). Must contain:
+#   DATABASE_URL, BETTER_AUTH_SECRET, DEEPSEEK_API_KEY, POSTGRES_USER, POSTGRES_PASSWORD, POSTGRES_DB
+#   (optional: GEMINI_API_KEY, ANTHROPIC_API_KEY/AUTH_TOKEN/BASE_URL, GITHUB_TOKEN)
+secretName: vtaskforge-secrets
+
+server:
+  port: 3100
+  replicas: 1                # single replica: RWO PVC + boot migrations
+  resources:
+    requests: { cpu: "250m", memory: "512Mi" }
+    limits:   { memory: "2Gi" }
+
+# /paperclip instance data (companies/goals/issues = the backlog) — RWO
+paperclipData:
+  size: 5Gi
+  storageClass: longhorn-ssd
+
+postgres:
+  image: postgres:17-alpine
+  storage:
+    size: 5Gi
+    storageClass: longhorn-ssd
+
+certificate:
+  issuerName: letsencrypt-prod
+  issuerKind: ClusterIssuer

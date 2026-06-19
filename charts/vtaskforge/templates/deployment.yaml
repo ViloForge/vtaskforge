@@ -1,0 +1,98 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "vtaskforge.fullname" . }}-paperclip
+  labels:
+    {{- include "vtaskforge.labels" . | nindent 4 }}
+spec:
+  accessModes: ["ReadWriteOnce"]
+  storageClassName: {{ .Values.paperclipData.storageClass }}
+  resources:
+    requests:
+      storage: {{ .Values.paperclipData.size }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "vtaskforge.fullname" . }}
+  labels:
+    {{- include "vtaskforge.labels" . | nindent 4 }}
+    app.kubernetes.io/component: server
+spec:
+  selector:
+    app.kubernetes.io/name: vtaskforge
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/component: server
+  ports:
+    - name: http
+      port: {{ .Values.server.port }}
+      targetPort: {{ .Values.server.port }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "vtaskforge.fullname" . }}
+  labels:
+    {{- include "vtaskforge.labels" . | nindent 4 }}
+    app.kubernetes.io/component: server
+spec:
+  replicas: {{ .Values.server.replicas }}
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: vtaskforge
+      app.kubernetes.io/instance: {{ .Release.Name }}
+      app.kubernetes.io/component: server
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: vtaskforge
+        app.kubernetes.io/instance: {{ .Release.Name }}
+        app.kubernetes.io/component: server
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: server
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.server.port }}
+          envFrom:
+            - secretRef:
+                name: {{ .Values.secretName }}   # DATABASE_URL, BETTER_AUTH_SECRET, DEEPSEEK_API_KEY, GH_TOKEN, ...
+          env:
+            - name: PORT
+              value: {{ .Values.server.port | quote }}
+            - name: SERVE_UI
+              value: "true"
+            - name: PAPERCLIP_DEPLOYMENT_MODE
+              value: "authenticated"
+            - name: PAPERCLIP_DEPLOYMENT_EXPOSURE
+              value: "private"
+            - name: PAPERCLIP_PUBLIC_URL
+              value: {{ .Values.publicUrl | quote }}
+            - name: GEMINI_CLI_TRUST_WORKSPACE
+              value: "true"
+          volumeMounts:
+            - name: paperclip
+              mountPath: /paperclip
+          startupProbe:
+            httpGet: { path: /, port: {{ .Values.server.port }} }
+            periodSeconds: 5
+            failureThreshold: 60        # up to ~5min for first-boot migrations
+          readinessProbe:
+            httpGet: { path: /, port: {{ .Values.server.port }} }
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket: { port: {{ .Values.server.port }} }
+            periodSeconds: 20
+          resources:
+            {{- toYaml .Values.server.resources | nindent 12 }}
+      volumes:
+        - name: paperclip
+          persistentVolumeClaim:
+            claimName: {{ include "vtaskforge.fullname" . }}-paperclip

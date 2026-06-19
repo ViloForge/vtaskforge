@@ -1,0 +1,6 @@
+apiVersion: v2
+name: vtaskforge
+description: vtaskforge — the orchestration platform (a fork of Paperclip) for viloforge-asdlc
+type: application
+version: 0.1.0
+appVersion: "0.1.0"

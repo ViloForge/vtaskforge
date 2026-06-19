@@ -1,0 +1,33 @@
+{{- if .Values.ingress.certResolverViaCertManager }}
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: {{ include "vtaskforge.fullname" . }}-tls
+  labels:
+    {{- include "vtaskforge.labels" . | nindent 4 }}
+spec:
+  secretName: {{ include "vtaskforge.fullname" . }}-tls
+  issuerRef:
+    name: {{ .Values.certificate.issuerName }}
+    kind: {{ .Values.certificate.issuerKind }}
+  dnsNames:
+    - {{ .Values.ingress.host }}
+---
+{{- end }}
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: {{ include "vtaskforge.fullname" . }}
+  labels:
+    {{- include "vtaskforge.labels" . | nindent 4 }}
+spec:
+  entryPoints:
+    - {{ .Values.ingress.entryPoint }}
+  routes:
+    - kind: Rule
+      match: Host(`{{ .Values.ingress.host }}`)
+      services:
+        - name: {{ include "vtaskforge.fullname" . }}
+          port: {{ .Values.server.port }}
+  tls:
+    secretName: {{ include "vtaskforge.fullname" . }}-tls

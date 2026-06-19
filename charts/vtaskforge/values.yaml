@@ -21,6 +21,7 @@ secretName: vtaskforge-secrets
 
 server:
   port: 3100
+  fsGroup: 1000
   replicas: 1                # single replica: RWO PVC + boot migrations
   resources:
     requests: { cpu: "250m", memory: "512Mi" }

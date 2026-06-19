@@ -51,6 +51,11 @@ spec:
         app.kubernetes.io/instance: {{ .Release.Name }}
         app.kubernetes.io/component: server
     spec:
+      securityContext:
+        # PVCs mount root-owned; the server runs as node(uid/gid 1000). fsGroup makes the
+        # /paperclip volume group-writable so it can mkdir instances/default/... (k8s PVCs
+        # don't inherit image ownership the way Docker named-volumes do).
+        fsGroup: {{ .Values.server.fsGroup }}
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}

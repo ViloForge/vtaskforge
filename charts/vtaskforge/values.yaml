@@ -1,11 +1,11 @@
-# vtaskforge chart defaults. Per-env overrides live in
-# viloforge-platform/argo/products/vtaskforge/<env>/values.yaml
+# vtaskforge chart defaults. Per-env overrides live in the Argo Application
+# (viloforge-gitops/clusters/<cluster>/).
 image:
-  repository: harbor.viloforge.com/vtaskforge/vtaskforge
-  tag: ""            # set per-env (the pushed Harbor tag)
+  repository: ghcr.io/viloforge/vtaskforge
+  tag: ""            # set per-env (the published image tag)
   pullPolicy: IfNotPresent
 imagePullSecrets:
-  - name: harbor-pull-secret
+  - name: ghcr-pull
 
 # Public URL + ingress host — set per env (asdlc.viloforge.com / asdlc.test.viloforge.com)
 publicUrl: ""

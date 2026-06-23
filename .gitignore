@@ -40,6 +40,11 @@ tmp/
 feedback-export-*
 diagnostics/
 
+# local dev — docker compose stack (secrets + machine-specific override; see
+# viloforge-asdlc docs/local-setup/setting-up-paperclip-locally.md)
+docker/.env.local
+docker/compose.override.local.yml
+
 # Editor / tool temp files
 *.tmp
 .vscode/

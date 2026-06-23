@@ -2,7 +2,7 @@
 
 - **Status:** Accepted (2026-06-18)
 - **Deciders:** operator + Claude
-- **Relates to:** ADR-0001 (product); the Constitution Art. 2/5; `VTASKFORGE-VISION.md` Tier A.
+- **Relates to:** ADR-0001 (product); the Constitution Art. 2/5.
 
 ## Context
 vtaskforge today ≈ vanilla Paperclip + the Hermes overlay. The spike proved agents *can*

@@ -2,9 +2,7 @@
 
 - **Status:** Accepted (2026-06-18)
 - **Deciders:** operator + Claude
-- **Relates to:** the Constitution (`../AGENTS.md`); program docs
-  `viloforge-asdlc/docs/ASDLC-ON-PAPERCLIP.md`, `VTASKFORGE-VISION.md`, and program
-  ADR-0001/0002/0003.
+- **Relates to:** the Constitution (`../AGENTS.md`).
 
 ## Context
 vtaskforge is built by **dogfooding itself** — we run a vtaskforge instance and use it to

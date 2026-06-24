@@ -1,13 +1,19 @@
-# vtaskforge chart defaults. Per-env overrides live in the Argo Application
+# paperclip chart defaults. Per-env overrides live in the Argo Application
 # (viloforge-gitops/clusters/<cluster>/).
+
+# Value of the app.kubernetes.io/name selector label. Empty -> chart name
+# (paperclip). A release created before the vtaskforge->paperclip rename must
+# pin this to "vtaskforge" so its IMMUTABLE selector stays unchanged on upgrade.
+nameOverride: ""
+
 image:
-  repository: ghcr.io/viloforge/vtaskforge
+  repository: ghcr.io/viloforge/paperclip
   tag: ""            # set per-env (the published image tag)
   pullPolicy: IfNotPresent
 imagePullSecrets:
   - name: ghcr-pull
 
-# Public URL + ingress host — set per env (asdlc.viloforge.com / asdlc.test.viloforge.com)
+# Public URL + ingress host — set per env (paperclip.viloforge.com / paperclip.test.viloforge.com)
 publicUrl: ""
 ingress:
   host: ""
@@ -17,7 +23,7 @@ ingress:
 # The k8s Secret materialized by the ExternalSecret (in viloforge-platform). Must contain:
 #   DATABASE_URL, BETTER_AUTH_SECRET, DEEPSEEK_API_KEY, POSTGRES_USER, POSTGRES_PASSWORD, POSTGRES_DB
 #   (optional: GEMINI_API_KEY, ANTHROPIC_API_KEY/AUTH_TOKEN/BASE_URL, GITHUB_TOKEN)
-secretName: vtaskforge-secrets
+secretName: paperclip-secrets
 
 server:
   port: 3100

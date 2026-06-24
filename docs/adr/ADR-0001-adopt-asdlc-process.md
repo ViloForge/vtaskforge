@@ -5,13 +5,13 @@
 - **Relates to:** the Constitution (`../AGENTS.md`).
 
 ## Context
-vtaskforge is built by **dogfooding itself** — we run a vtaskforge instance and use it to
+paperclip is built by **dogfooding itself** — we run a paperclip instance and use it to
 plan and execute its own construction, following the program's Agentic SDLC. We need a
 single, explicit statement of *how* work flows here so the Conductor/Critic and every agent
 share one model.
 
 ## Decision
-vtaskforge is developed via the **recursive-refinement ASDLC**:
+paperclip is developed via the **recursive-refinement ASDLC**:
 
 1. **Charter → REFINE → build.** Each scope is chartered (the *how* decided as ADRs,
    riskiest-unknown first, just-in-time) before slices are built. The goal tree is the design

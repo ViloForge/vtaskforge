@@ -5,11 +5,11 @@
 - **Relates to:** ADR-0001 (product); the Constitution Art. 2/5.
 
 ## Context
-vtaskforge today ≈ vanilla Paperclip + the Hermes overlay. The spike proved agents *can*
+paperclip today ≈ vanilla Paperclip + the Hermes overlay. The spike proved agents *can*
 complete tasks, but also that they **claim `done` prematurely** and that data-driven gates
 can't see cold paths — i.e. **agent execution is not yet trustworthy**. ADR-0001 mandates an
 evidence gate and Brakes, but **those don't exist yet** in the codebase. We can't safely
-dogfood (let agents build vtaskforge) until the thing that makes agent output trustworthy is
+dogfood (let agents build paperclip) until the thing that makes agent output trustworthy is
 in place.
 
 ## Decision

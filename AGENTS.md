@@ -1,17 +1,17 @@
-# AGENTS.md — vtaskforge
+# AGENTS.md — paperclip
 
-> **vtaskforge** is a **control plane for AI-agent companies** — a
-> **fork of [Paperclip](https://github.com/paperclipai/paperclip)** (rebranded), with
+> **paperclip** is a **control plane for AI-agent companies** — a
+> **fork of [Paperclip](https://github.com/paperclipai/paperclip)**, with
 > **Hermes agents** as the workers, running an Agentic SDLC (charter → recursive `REFINE` →
 > build, at autonomy **L3**).
 >
-> - **Origin:** `ViloForge/vtaskforge` (public **native fork** of `paperclipai/paperclip`).
+> - **Origin:** `ViloForge/paperclip` (public **native fork** of `paperclipai/paperclip`).
 >   **Upstream sync:** `upstream = paperclipai/paperclip`; pull deliberately ("Sync fork" /
 >   `git fetch upstream && git merge upstream/master`). Keep the Paperclip `LICENSE` (MIT).
 > - **Product ADRs** in `docs/adr/`: ADR-0001 (adopt the ASDLC), ADR-0002 (first build target
 >   = the reliability spine), ADR-0003 (package the Hermes worker into the image). More added
 >   just-in-time as we build.
-> - **Replaces** the old Django/DRF vtaskforge (now `ViloForge/vtaskforge-legacy`, archived).
+> - **Replaces** the old Django/DRF app (now `ViloForge/vtaskforge-legacy`, archived).
 > - **Principles (non-negotiable):** charter-before-build · gate-on-evidence-not-self-report ·
 >   structural-rules-need-a-Brake.
 >
@@ -20,9 +20,9 @@
 
 ---
 
-# Constitution (vtaskforge)
+# Constitution (paperclip)
 
-The behavioral law for **every agent and human** doing work in vtaskforge. The **Conductor**
+The behavioral law for **every agent and human** doing work in paperclip. The **Conductor**
 and **Critic** cite these articles; violating one **blocks the transition to `done`**.
 Grounded in the recursive-refinement ASDLC and the `vfwms-forge` prior art.
 

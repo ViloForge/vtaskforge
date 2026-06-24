@@ -1,6 +1,6 @@
-# vtaskforge — Product Architecture Decision Records
+# paperclip — Product Architecture Decision Records
 
-These are **vtaskforge's *product* ADRs** — decisions about *this codebase*: how it's built
+These are **paperclip's *product* ADRs** — decisions about *this codebase*: how it's built
 and its internal architecture. One decision per file.
 
 The behavioral law is the **Constitution** in `../AGENTS.md`.
@@ -11,6 +11,6 @@ slices that cite it. Charter **just-in-time** — don't pre-write ADRs for unbui
 
 | ADR | Title | Status |
 |-----|-------|--------|
-| 0001 | Adopt the recursive-refinement ASDLC (how we build vtaskforge) | Accepted |
+| 0001 | Adopt the recursive-refinement ASDLC (how we build paperclip) | Accepted |
 | 0002 | First build target — the reliability spine (evidence gate + Brakes) | Accepted |
-| 0003 | Package the Hermes worker into the vtaskforge image (multi-stage graft) | Accepted |
+| 0003 | Package the Hermes worker into the paperclip image (multi-stage graft) | Accepted |

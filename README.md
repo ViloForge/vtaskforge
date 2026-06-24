@@ -448,5 +448,3 @@ MIT &copy; 2026 [Paperclip Labs, Inc](https://paperclip.ing)
 <p align="center">
   <sub>Open source under MIT. Built for people who want to get work done, not babysit agents.</sub>
 </p>
-
-<!-- ci: build-timing marker 2026-06-24 (safe to remove) -->

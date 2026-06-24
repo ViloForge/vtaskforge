@@ -1,7 +1,7 @@
 name: Chart
 
-# Publishes the vtaskforge Helm chart as an OCI artifact to
-# ghcr.io/viloforge/charts/vtaskforge on every v* tag (chart version = tag).
+# Publishes the paperclip Helm chart as an OCI artifact to
+# ghcr.io/viloforge/charts/paperclip on every v* tag (chart version = tag).
 # Pairs with docker.yml (image) — both fire from the same release tag.
 
 on:
@@ -47,7 +47,7 @@ jobs:
       - name: Package + push chart
         run: |
           set -euo pipefail
-          helm package charts/vtaskforge \
+          helm package charts/paperclip \
             --version "${{ steps.v.outputs.version }}" \
             --app-version "${{ steps.v.outputs.version }}"
-          helm push "vtaskforge-${{ steps.v.outputs.version }}.tgz" oci://ghcr.io/viloforge/charts
+          helm push "paperclip-${{ steps.v.outputs.version }}.tgz" oci://ghcr.io/viloforge/charts

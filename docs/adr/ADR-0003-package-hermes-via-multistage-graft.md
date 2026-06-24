@@ -1,4 +1,4 @@
-# ADR-0003 (product) — Package the Hermes worker into the vtaskforge image
+# ADR-0003 (product) — Package the Hermes worker into the paperclip image
 
 - **Status:** Accepted (2026-06-23)
 - **Deciders:** operator + Claude
@@ -6,7 +6,7 @@
 
 ## Context
 The `hermes_local` adapter (`hermes-paperclip-adapter`) drives Hermes by **spawning the
-`hermes` CLI as a child process** inside the vtaskforge server and parsing its stdout;
+`hermes` CLI as a child process** inside the paperclip server and parsing its stdout;
 session resumption is a `--resume <sessionId>` token. The adapter is process-local and
 filesystem-coupled — Hermes must be co-located with the server (`HOME=/paperclip/.hermes`)
 and **cannot** be reached over a socket. Today the Dockerfile bakes Hermes via
@@ -15,7 +15,7 @@ developing our own fork (`ViloForge/hermes-agent`) and publishing its image to G
 PyPI version pin is the wrong source of truth.
 
 ## Decision
-vtaskforge packages Hermes **into its own image at build time** via a **multi-stage graft**
+paperclip packages Hermes **into its own image at build time** via a **multi-stage graft**
 from the published hermes-agent image:
 
 1. The Dockerfile replaces the PyPI install with
@@ -24,14 +24,14 @@ from the published hermes-agent image:
 2. Hermes is **pinned by image digest**, not a version string — reproducible and signable.
 3. The `hermes_local` adapter and the `HOME=/paperclip/.hermes` seed entrypoint are
    **unchanged**; Hermes stays co-located in the same container.
-4. vtaskforge's own image is built and released from GitHub to `ghcr.io/viloforge/vtaskforge`
+4. paperclip's own image is built and released from GitHub to `ghcr.io/viloforge/paperclip`
    (CI: `.github/workflows/docker.yml`), pinned by digest in the deployment.
 
 ## Consequences
-- One deployable image (vtaskforge + Hermes co-located); the deployment pulls a single
-  `ghcr.io/viloforge/vtaskforge` image.
-- Hermes and vtaskforge release on **independent cadences**; a Hermes bump is a one-line
-  digest update + a vtaskforge image rebuild.
+- One deployable image (paperclip + Hermes co-located); the deployment pulls a single
+  `ghcr.io/viloforge/paperclip` image.
+- Hermes and paperclip release on **independent cadences**; a Hermes bump is a one-line
+  digest update + a paperclip image rebuild.
 - No PyPI publish is needed to ship Hermes changes; the fork's GHCR image is the source of truth.
 - Runtime coupling remains (Hermes is embedded); the image carries Hermes's python3.13 venv,
   so image size grows.

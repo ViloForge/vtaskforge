@@ -1,6 +1,6 @@
 apiVersion: v2
-name: vtaskforge
-description: vtaskforge — a control plane for AI-agent companies (a fork of Paperclip)
+name: paperclip
+description: paperclip — a control plane for AI-agent companies (ViloForge fork of paperclipai/paperclip)
 type: application
 version: 0.1.0
 appVersion: "0.1.0"
@@ -9,4 +9,4 @@ appVersion: "0.1.0"
 # the same mechanism docker/metadata-action gives the image package. Without it
 # the chart package is created orphaned (repository: None) and CI pushes 403.
 annotations:
-  org.opencontainers.image.source: https://github.com/ViloForge/vtaskforge
+  org.opencontainers.image.source: https://github.com/ViloForge/paperclip

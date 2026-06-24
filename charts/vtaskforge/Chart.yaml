@@ -4,3 +4,9 @@ description: vtaskforge — a control plane for AI-agent companies (a fork of Pa
 type: application
 version: 0.1.0
 appVersion: "0.1.0"
+# Links the published OCI chart package to its source repo on push (GHCR reads
+# this manifest annotation), so the repo GITHUB_TOKEN inherits write access —
+# the same mechanism docker/metadata-action gives the image package. Without it
+# the chart package is created orphaned (repository: None) and CI pushes 403.
+annotations:
+  org.opencontainers.image.source: https://github.com/ViloForge/vtaskforge
